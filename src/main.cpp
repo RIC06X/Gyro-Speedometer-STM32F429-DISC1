@@ -216,7 +216,7 @@ void exportData(queue<float *>& data){
             }
         }
 
-        velocity = 2 * count * USER_HEIGHT * 0.45 / 20;
+        velocity =4 * count * USER_HEIGHT * 0.45 / 20;
         distance_in_20_seconds = velocity * 20 / 100;
         sprintf((char *)char_buffer, "AccSpeed= %d cm/s", velocity);
         lcd.DisplayStringAt(0, LINE(7), (uint8_t *)char_buffer, LEFT_MODE);
