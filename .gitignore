@@ -1,4 +1,4 @@
 .vscode/
 *.csv
 .DS_Store
-.pio/build
+.pio/build/

@@ -17,6 +17,7 @@ void getGyroData(float* GyroBuffer);
 void LCD_Setup();
 void LCD_printGyro(float* GyroBuffer, uint8_t* text, uint8_t text_length);
 void TS_Setup();
+void TS_thread(TS_StateTypeDef* TS_State);
 void updateStride(TS_StateTypeDef& TS_State);
 void StartStopCheck(TS_StateTypeDef& TS_State);
 void updateStride(TS_StateTypeDef& TS_State);
@@ -54,13 +55,13 @@ int main()
     printf("Gyroscope started\n");  
     LCD_Setup();
     TS_Setup();
-    // ts_thread.start(callback(TS_thread, &TS_State));
+    ts_thread.start(callback(TS_thread, &TS_State));
 
     while(1) {
         getGyroData(GyroBuffer);
         LCD_printGyro(GyroBuffer, text, 30);
-        updateStride(TS_State);
-        StartStopCheck(TS_State);
+        // updateStride(TS_State);
+        // StartStopCheck(TS_State);
 
         writeData(saved_data, GyroBuffer);
         calculateInstantVelocity(saved_data);
@@ -70,11 +71,11 @@ int main()
     }
 }
 
-void TS_thread(TS_StateTypeDef& TS_State){
+void TS_thread(TS_StateTypeDef* TS_State){
     while(1){
-        updateStride(TS_State);
-        StartStopCheck(TS_State);
-        ThisThread::sleep_for(100);
+        updateStride(*TS_State);
+        StartStopCheck(*TS_State);
+        ThisThread::sleep_for(200);
     }
 };
 
@@ -153,6 +154,8 @@ void StartStopCheck(TS_StateTypeDef& TS_State){
     ts.GetState(&TS_State);
     if ((TS_State.TouchDetected) && (TS_State.X > 21) && (TS_State.X < 91) && (TS_State.Y > 255) && (TS_State.Y < 289)){
         //printf("start btn pressed");
+        lcd.ClearStringLine(7);
+        lcd.ClearStringLine(8);
         FLAG_START = true;
         lcd.DisplayStringAt(0, LINE(7), (uint8_t *)"START Pressed", LEFT_MODE);
     }
